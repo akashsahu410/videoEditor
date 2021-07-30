@@ -1,0 +1,819 @@
+<html> 
+<head> 
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="upload_img.css">
+    <link rel="stylesheet" href="css/style.css" type="text/css">
+    <script src="jscolor.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <script src="upload_img.js"></script>
+    <!-- <script src="recordable_Canvas.js"></script> -->
+    
+
+    <style>
+        body{ background-color: ivory; }
+        #canvas {
+			border: 2px solid black;
+		}
+		textarea {
+			height: 100%;
+			width: 100%;
+			resize: none;
+			/* border: none; */
+			padding: 0px;
+			margin: 0px;
+			background: transparent;
+			font-size: 12px;
+			border: 1px dashed #222;
+		}
+        #slider{
+            width:30%;
+            background-color: black;
+            margin-left: 10px;
+        }
+		.video-sec-nw {
+			height: 0;
+		}
+      
+    </style>
+</head> 
+
+<body> 
+    <div class="text-center">
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content modalBorder-grdnt">
+		  
+            <div class="indicator"></div>
+            <!--<div class="modal-header">
+				   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+				  </button>
+            </div>-->
+            <div class="modal-body">
+              <div class="modl-inr">
+					<div class="position-relative upload-section">
+						<label class="upload-image">
+							<!--<input type="file" class="d-none" accept="image/*" onchange="previewFiles()" id="inputUp" multiple>-->
+							<input type="file" name="file" onchange="previewFiles()" id="inputUp" multiple accept="image/*">
+						</label>
+						<a class="add-more" href="#">
+							 Upload Image   
+						</a>  
+					</div>
+                  <!--<div class="position-relative">
+				  
+                    <input type="file" class="d-none" accept="image/*" onchange="previewFiles()" id="inputUp" multiple>
+					
+                  </div>-->
+              </div>
+			   <div class=" ml-auto mr-auto prv-sec preview">
+			
+					</div>
+				<div class="mdl-clse">
+				  <button class="btn clos-btn" data-dismiss="modal">Close</button>
+				 </div>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tools_block">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-1">
+					<div class="top-logo">
+						<img src="img/logo-2.svg">
+					</div>
+				</div>
+				<div class="col-md-10">
+					<div class="tools-btn">
+					<div class="drag-tools">
+						<button class="btn actions left-margin" id="line" data-datac="line" alt="Line"><img src="img/line.png"alt="Line"></button>
+						<button class="btn actions" data-datac="rectangle"><img src="img/rectangle.png"></button>
+						<button class="btn actions" data-datac="circle"><img src="img/circle.png"></button>
+						<button class="btn actions" data-datac="arrow"><img src="img/arrow.png"></button></button>
+						<button class="btn actions" id="text" data-datac="text"><img src="img/text.png"></button>
+						<button class="btn actions" data-datac="image"><img src="img/imgae.png"></button>
+						<!--<label class="labell">Color:</label>-->
+						<input  class="color-btn" value="#000" data-jscolor="{}" id="current_color">
+						<button class="btn actions" data-toggle="modal" data-target="#exampleModal">
+						<img src="img/upload-img.png"></button>
+						<button class="btn actions" id="undo" onclick="undo()"><img src="img/undo.png"></button>
+						<button class="btn actions" id="redo" onclick="redo()"><img src="img/redo.png"></button>
+						<button class="btn actions" onclick="clearCanvas()"><img src="img/clear.png"></button>
+					</div>
+					<div class="width-tool">
+						<!--<label for class="labell left-margin"> :</label>-->
+						 <select class="down" name="width" id="width">
+							<!-- <option value="0">Width</option> -->
+							<option value="1">1</option>
+							<option value="2">2</option>
+							<option value="4">4</option>
+							<option value="6">6</option>
+							<option value="8">8</option>
+							<option value="10">10</option>
+							<option value="12">12</option>
+							<option value="14">14</option>
+							<option value="16">16</option>
+							<option value="18">18</option>
+							<option value="20">20</option>
+							<option value="24">24</option>
+							<option value="30">30</option>
+						</select>
+
+						<!--<label for class="labell left-margin">Font Size :</label>-->
+						 <select class="down" name="fontSize" id="fontSize">
+							<!-- <option value="0">Font Size</option> -->
+							<option value="12">12</option>
+							<option value="14">14</option>
+							<option value="16">16</option>
+							<option value="18">18</option>
+							<option value="20">20</option>
+							<option value="22">22</option>
+							<option value="24">24</option>
+							<option value="26">26</option>
+							<option value="28">28</option>
+							<option value="36">36</option>
+							<option value="48">48</option>
+							<option value="72">72</option>
+							<option value="72">96</option>
+						</select>
+						<span class="audio left-margin">
+							<label class="audo-btn-lbl" for="audio-1"> <input type="checkbox" name="audio" value="video_audio" id="audio-1" checked/> Original Audio</label>
+							<label class="audo-btn-lbl" for="audio-2"><input type="checkbox" name="audio" value="mic_audio" id="audio-2" checked/> Mic Audio</label>
+							<button class="btn actions record-btn" id="recording">Start Recording
+								<!--<img id="record-img" src="img/clear.png">-->
+							</button>
+						</span>
+					</div>
+					</div>
+				</div>
+			</div>
+		</div>
+    </div>
+	<br>
+
+    <div class="canvas-outr" id="iframe">
+        <canvas id="canvas"></canvas>
+            <div class="video-sec" id="video-container">
+              <div class="playback-animation" id="playback-animation">
+                <svg class="playback-icons">
+                  <use class="hidden" href="#play-icon"></use>
+                  <use href="#pause"></use>
+                </svg>
+              </div>
+		    <div class="video-sec-nw">
+              <!-- <video controls class="video" id="video" preload="metadata" poster="poster.jpg"> -->
+              <video crossOrigin="anonymous" controls class="video" id="video">
+                <source src="" type="video/mp4"></source>
+              </video>
+            </div>
+              <div class="video-controls hidden" id="video-controls">
+                <div class="video-progress">
+                  <progress id="progress-bar" value="0" min="0"></progress>
+                  <input class="seek" id="seek" value="0" min="0" type="range" step="1">
+                  <div class="seek-tooltip" id="seek-tooltip">00:00</div>
+                </div>
+        
+                <div class="bottom-controls">
+                  <div class="left-controls">
+                    <button data-title="Play (k)" id="play">
+                      <svg class="playback-icons">
+                        <use href="#play-icon"></use>
+                        <use class="hidden" href="#pause"></use>
+                      </svg>
+                    </button>
+        
+                    <div class="volume-controls">
+                      <button data-title="Mute (m)" class="volume-button" id="volume-button">
+                        <svg>
+                          <use class="hidden" href="#volume-mute"></use>
+                          <use class="hidden" href="#volume-low"></use>
+                          <use href="#volume-high"></use>
+                        </svg>
+                      </button>
+        
+                      <input class="volume" id="volume" value="1"
+                      data-mute="0.5" type="range" max="1" min="0" step="0.01">
+                    </div>
+        
+                    <div class="time">
+                      <time id="time-elapsed">00:00</time>
+                      <span> / </span>
+                      <time id="duration">00:00</time>
+                    </div>
+                  </div>
+        
+                  <div class="right-controls">
+                    <button data-title="PIP (p)" class="pip-button" id="pip-button">
+                      <svg>
+                        <use href="#pip"></use>
+                      </svg>
+                    </button>
+                    <button data-title="Full screen (f)" class="fullscreen-button" id="fullscreen-button">
+                      <!--<svg>
+                        <use href="#fullscreen"></use>
+                        <use href="#fullscreen-exit" class="hidden"></use>
+                      </svg>-->
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          
+        
+          <svg style="display: none">
+            <defs>
+              <symbol id="pause" viewBox="0 0 24 24">
+                <path d="M14.016 5.016h3.984v13.969h-3.984v-13.969zM6 18.984v-13.969h3.984v13.969h-3.984z"></path>
+              </symbol>
+        
+              <symbol id="play-icon" viewBox="0 0 24 24">
+                <path d="M8.016 5.016l10.969 6.984-10.969 6.984v-13.969z"></path>
+              </symbol>
+        
+              <symbol id="volume-high" viewBox="0 0 24 24">
+              <path d="M14.016 3.234q3.047 0.656 5.016 3.117t1.969 5.648-1.969 5.648-5.016 3.117v-2.063q2.203-0.656 3.586-2.484t1.383-4.219-1.383-4.219-3.586-2.484v-2.063zM16.5 12q0 2.813-2.484 4.031v-8.063q1.031 0.516 1.758 1.688t0.727 2.344zM3 9h3.984l5.016-5.016v16.031l-5.016-5.016h-3.984v-6z"></path>
+              </symbol>
+        
+              <symbol id="volume-low" viewBox="0 0 24 24">
+              <path d="M5.016 9h3.984l5.016-5.016v16.031l-5.016-5.016h-3.984v-6zM18.516 12q0 2.766-2.531 4.031v-8.063q1.031 0.516 1.781 1.711t0.75 2.32z"></path>
+              </symbol>
+        
+              <symbol id="volume-mute" viewBox="0 0 24 24">
+              <path d="M12 3.984v4.219l-2.109-2.109zM4.266 3l16.734 16.734-1.266 1.266-2.063-2.063q-1.547 1.313-3.656 1.828v-2.063q1.172-0.328 2.25-1.172l-4.266-4.266v6.75l-5.016-5.016h-3.984v-6h4.734l-4.734-4.734zM18.984 12q0-2.391-1.383-4.219t-3.586-2.484v-2.063q3.047 0.656 5.016 3.117t1.969 5.648q0 2.203-1.031 4.172l-1.5-1.547q0.516-1.266 0.516-2.625zM16.5 12q0 0.422-0.047 0.609l-2.438-2.438v-2.203q1.031 0.516 1.758 1.688t0.727 2.344z"></path>
+              </symbol>
+        
+              <symbol id="fullscreen" viewBox="0 0 24 24">
+              <path d="M14.016 5.016h4.969v4.969h-1.969v-3h-3v-1.969zM17.016 17.016v-3h1.969v4.969h-4.969v-1.969h3zM5.016 9.984v-4.969h4.969v1.969h-3v3h-1.969zM6.984 14.016v3h3v1.969h-4.969v-4.969h1.969z"></path>
+              </symbol>
+        
+              <symbol id="fullscreen-exit" viewBox="0 0 24 24">
+              <path d="M15.984 8.016h3v1.969h-4.969v-4.969h1.969v3zM14.016 18.984v-4.969h4.969v1.969h-3v3h-1.969zM8.016 8.016v-3h1.969v4.969h-4.969v-1.969h3zM5.016 15.984v-1.969h4.969v4.969h-1.969v-3h-3z"></path>
+              </symbol>
+        
+              <symbol id="pip" viewBox="0 0 24 24">
+              <path d="M21 19.031v-14.063h-18v14.063h18zM23.016 18.984q0 0.797-0.609 1.406t-1.406 0.609h-18q-0.797 0-1.406-0.609t-0.609-1.406v-14.016q0-0.797 0.609-1.383t1.406-0.586h18q0.797 0 1.406 0.586t0.609 1.383v14.016zM18.984 11.016v6h-7.969v-6h7.969z"></path>
+              </symbol>
+            </defs>
+          </svg>
+        <!-- <video crossOrigin="anonymous" id="video" controls>
+            <source src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" type="video/mp4">
+        </video>    -->
+    </div>
+	<img id="html5" src="https://i.ytimg.com/vi/dwV04XuiWq4/maxresdefault.jpg" hidden/>
+	
+    <script src="index.js"></script>
+    <script>
+        var canvas,ctx,video1,video_width,video_height,canvasOffset,offsetX,offsetY;
+        var redo_stack = []
+        var data,fetch_Current_Frame,zoom_factor
+        var selectedWidth
+        var selectedFontWidth;
+        var zoom_factor = 1.0
+        var lines=[];
+        var current_Frame_Img;
+
+        // when document is loaded except the video
+        $( document ).ready(function() {
+            canvas = document.getElementById('canvas');
+            ctx = canvas.getContext('2d');
+            video1 = document.getElementById('video');
+            
+            let searchParams = new URLSearchParams(window.location.search).get('name')
+            console.log("param",searchParams)
+
+            if(searchParams == null){
+                searchParams = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4"
+            }
+            video1.src = searchParams;
+            video1.load();
+
+            selectedWidth = $('#width').children("option:selected").val();
+            // console.log("width",selectedWidth)
+
+            selectedFontWidth = $('#fontSize').children("option:selected").val();
+            // console.log("font Size",selectedFontWidth)
+			// var imgv  = document.getElementById("html5");
+			// ctx.drawImage(imgv, 0,0,video_width,video_height)
+            var startX,startY,mouseX,mouseY;
+            var isDown=false;
+
+            // change according to drawing tools type (line,rectangele,square,circle,arrow)
+            var current_Tool = "line";
+            var current_color = "black"
+
+            ctx.strokeStyle=current_color;
+            $('#current_color').val("#000")
+            ctx.lineWidth=1;
+            $("#line").css("background-color", "grey");
+         
+            // to disable the screen from zoom in/out
+            var keyCodes = [61, 107, 173, 109, 187, 189];
+            $(document).keydown(function(event) {   
+            if (event.ctrlKey==true && (keyCodes.indexOf(event.which) != -1)) {
+                    alert('disabling zooming in');
+                    var browserZoomLevel = Math.round(window.devicePixelRatio * 100);
+                    // console.log(browserZoomLevel)
+                    // setZoom(1.2,$(".tools_block")[0]) 
+                    event.preventDefault();
+                }
+            })
+
+            $(window).bind('mousewheel DOMMouseScroll', function (event) {
+                if (event.ctrlKey == true) {
+                    alert('disabling zooming'); 
+                    event.preventDefault();
+                }
+            })
+
+
+
+
+            // to set the current color in textarea
+            $("#current_color").on({
+                click: function(){
+                    current_color = $(this).val()
+                    $('textarea').css('color',current_color)
+                },
+
+                mousedown: function(){
+                    current_color = $(this).val()
+                    $('textarea').css('color',current_color)
+                },
+
+                change: function(){
+                    current_color = $(this).val()
+                    $('textarea').css('color',current_color)
+                },
+                input: function(){
+                    current_color = $(this).val()
+                    $('textarea').css('color',current_color)
+                },
+            })
+                
+            // redraw the tools after undo and redo of drawing tools
+            function redrawTools(){
+                // // clear the canvas
+                ctx.clearRect(0,0,canvas.width,canvas.height);
+
+                // to use the current selected color
+                useCurrentColor()
+
+                drawTheImage(current_Frame_Img);
+
+                // // redraw the image
+                // drawTheImage(img);
+                console.log("existig tools",lines)
+
+                // redraw all previous lines
+                for(var i=0;i<lines.length;i++){
+                    drawTool(lines[i]);
+                }
+            }
+
+
+            // To select the current color for drawing tools
+            useCurrentColor = function() { 
+                current_color = $('#current_color').val()
+                ctx.strokeStyle=current_color;
+            }
+            
+            // To draw the ellipse or circle
+            function drawEllipse(x1, y1, x2, y2) {
+                var radiusX = (x2 - x1) * 0.5,   /// radius for x based on input
+                    radiusY = (y2 - y1) * 0.5,   /// radius for y based on input
+                    centerX = x1 + radiusX,      /// calc center
+                    centerY = y1 + radiusY,
+                    step = 0.01,                 /// resolution of ellipse
+                    a = step,                    /// counter
+                    pi2 = Math.PI * 2 - step;    /// end angle
+
+                /// set start point at angle 0
+                ctx.moveTo(centerX + radiusX * Math.cos(0),
+                        centerY + radiusY * Math.sin(0));
+
+                /// create the ellipse    
+                for(; a < pi2; a += step) {
+                    ctx.lineTo(centerX + radiusX * Math.cos(a),
+                            centerY + radiusY * Math.sin(a));
+                }
+            }
+
+            // To draw the arrow 
+            function drawLineWithArrowhead(p0,p1,headLength){
+                // constants (could be declared as globals outside this function)
+                var PI=Math.PI;
+                var degreesInRadians225=225*PI/180;
+                var degreesInRadians135=135*PI/180;
+
+                // calc the angle of the line
+                var dx=p1.x-p0.x;
+                var dy=p1.y-p0.y;
+                var angle=Math.atan2(dy,dx);
+
+                // calc arrowhead points
+                var x225=p1.x+headLength*Math.cos(angle+degreesInRadians225);
+                var y225=p1.y+headLength*Math.sin(angle+degreesInRadians225);
+                var x135=p1.x+headLength*Math.cos(angle+degreesInRadians135);
+                var y135=p1.y+headLength*Math.sin(angle+degreesInRadians135);
+
+                // draw the line from p0 to p1
+                ctx.moveTo(p0.x,p0.y);
+                ctx.lineTo(p1.x,p1.y);
+                // draw partial arrowhead at 225 degrees
+                ctx.moveTo(p1.x,p1.y);
+                ctx.lineTo(x225,y225);
+                // draw partial arrowhead at 135 degrees
+                ctx.moveTo(p1.x,p1.y);
+                ctx.lineTo(x135,y135);
+            
+            }
+
+            applyText = function(textarea_id){
+                let top_coords = $(".ui-draggable").css("top");
+                let left_coords = $(".ui-draggable").css("left");
+                // alert(top_coords,left_coords)
+                
+                top_coords = top_coords.replace('px', '');
+                left_coords = left_coords.replace('px', '');
+
+                let {x,y}=getScroll();
+
+                let exactX = left_coords-offsetX
+                let exactY = top_coords-offsetY+y+33
+
+                let textareaId = $(textarea_id).attr('id')
+                let value_got = $("#"+textareaId).val()
+                value_got = value_got.split('\n');
+
+                // console.log("textarea value",value_got)
+
+                $("#"+textareaId).parent().remove()
+
+                let new_obj = {"type":"text",x1:parseInt(exactX),y1:parseInt(exactY),"color":current_color,"fontSize":selectedFontWidth,
+                    "fontStyle":"Arial","text":value_got,"frame_number":fetch_Current_Frame}
+
+                lines.push(new_obj)
+                drawTool(new_obj)
+                current_Tool = ""
+                $("#text").css("background-color", "white");
+            }
+
+            textareaElement = function(){
+                var new_offset = {top:offsetY, left:offsetX};
+                var new_width = 200;
+                var new_height = 150;
+                var dynamic_id = "go"+makeid(3)
+                $('<div id="addText'+makeid(3)+'"><textarea id='+dynamic_id+'></textarea><button class="btn btn-sm" onclick="applyText('+dynamic_id+')">Apply</button><button class="btn btn-sm close_tag">Close</button></div>').width(new_width)
+                    .height(new_height)
+                    .draggable({
+                            cancel: "text",
+                            start: function (){
+                                $("#"+dynamic_id).focus();
+                            },
+                            stop: function (){
+                                $("#"+dynamic_id).focus();
+                            } 
+                        })
+                    .resizable()
+                    .css({
+                            'position'	        : 'absolute',
+                            'border-color'      : 'white',
+                            'border-width'      : '1px',
+                            'border-style'	    : 'dashed',
+                    })
+                    .offset(new_offset)
+                    .appendTo('body');
+                    $("#"+dynamic_id).css({'font-size':selectedFontWidth+"px",color:current_color})
+            }
+
+            // Filter the values of drawing Array to remove the undefined values
+            filter_Values = function(){
+                lines = lines.filter(function( element ) {
+                    return element !== undefined;
+                });
+                redo_stack = redo_stack.filter(function( element ) {
+                    return element !== undefined;
+                });
+            }
+            // Undo the last applied frawing tool
+            undo = function() { 
+                // console.log("undo stack",lines)
+                // console.log("redo stack",redo_stack)
+                data = lines.pop()
+                redo_stack.push(data)
+                filter_Values()
+                redrawTools()
+            }
+
+            // Redo the last applied frawing tool
+            redo = function() { 
+                data = redo_stack.pop()
+                lines.push(data)
+                // console.log("undo stack",lines)
+                // console.log("redo stack",redo_stack)
+                filter_Values()
+                redrawTools()
+            }
+            
+            // To clear the canvas except the image
+            clearCanvas = function() { 
+                console.log("clear the canvas completely")
+                redo_stack = []
+                lines = []
+                redrawTools()
+            }
+
+            // // To export the image as jpg/png
+            // $('#export').click(function() {
+            //     var link = document.createElement('a');
+            //     link.download = 'download.png';
+            //     link.href = canvas.toDataURL()
+            //     link.click();
+            //     link.delete;
+            // })
+            
+    
+
+            // handle the mouse event on click
+            handleMouseDown = (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+
+                let {x,y}=getScroll();
+
+                mouseX=parseInt(e.clientX-offsetX)+x;
+                mouseY=parseInt(e.clientY-offsetY)+y;
+
+                // Put your mousedown stuff here
+                startX=mouseX;
+                startY=mouseY;
+                isDown=true;
+                // console.log("in mouse down")
+            }
+
+            // handle the mouse event on move
+            handleMouseUp = (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+
+                // Put your mouseup stuff here
+                isDown=false;
+                if(current_Tool != "text"){
+                    if((startX && startY) && (current_Tool) && (startX >= 0 && startY >= 0 && mouseX >= 0 && mouseY >= 0)){
+                        lines.push({"type":current_Tool,x1:startX,y1:startY,x2:mouseX,y2:mouseY,"color":current_color,"image":$("#uploaded_img").attr('src'),
+                        'width':selectedWidth,"frame_number":fetch_Current_Frame});
+                    }    
+                }
+
+                let newArr = lines.reduce((acc, current) => {
+                const x = acc.find(item => (item.x1 === current.x1 && item.x2 === current.x2 && item.y1 === current.y1 && item.y2 === current.y2));
+                if (!x) {
+                    return acc.concat([current]);
+                } else {
+                    return acc;
+                }
+                }, []);
+                lines = newArr
+
+                // console.log("in mouse up",lines)
+            }
+
+            // handle the event on mouse move
+            handleMouseMove = (e) => {
+                let {x,y}=getScroll();
+
+                if(!isDown){return;}
+                e.stopPropagation();
+                e.preventDefault();
+                mouseX=parseInt(e.clientX-offsetX)+x
+                mouseY=parseInt(e.clientY-offsetY)+y
+
+                // console.log("in mouse move",mouseX,mouseY)
+
+                // Put your mousemove stuff here
+                drawTools(mouseX,mouseY);
+            }
+            
+            // draw the image on canvas
+            function drawTheImage(img){
+                ctx.drawImage(img,0,0);
+                ctx.globalAlpha=1.00;
+            }
+            
+            // draw the tools 
+            drawTools = (toX,toY) => {
+                ctx.clearRect(0,0,canvas.width,canvas.height);
+
+                // to use the current selected color
+                useCurrentColor()
+
+                drawTheImage(current_Frame_Img);
+
+                // redraw all previous lines
+                for(var i=0;i<lines.length;i++){
+                    drawTool(lines[i]);
+                }
+
+                // draw the current line
+                drawTool({"type":current_Tool,x1:startX,y1:startY,x2:mouseX,y2:mouseY,"color":current_color,"image":$("#uploaded_img").attr('src'),'width':selectedWidth,"frame_number":fetch_Current_Frame});
+            }
+
+            //draw the single tool
+            drawTool = (tool) => {
+                ctx.beginPath();
+                
+                current_color = $('#current_color').val()
+                ctx.strokeStyle=tool["color"];
+                ctx.lineWidth = tool["width"];
+
+                if(tool["type"] == "line" && fetch_Current_Frame >= tool["frame_number"]){
+                    ctx.moveTo(tool.x1, tool.y1);
+                    ctx.lineTo(tool.x2, tool.y2);
+                }
+                else if(tool["type"] == "rectangle" && fetch_Current_Frame >= tool["frame_number"]){
+                    ctx.rect(tool.x1, tool.y1, tool.x2-tool.x1, tool.y2-tool.y1);
+                }
+                else if(tool["type"] == "circle" && fetch_Current_Frame >= tool["frame_number"]){
+                    drawEllipse(tool.x1, tool.y1, tool.x2, tool.y2)
+                }
+                else if(tool["type"] == "arrow" && fetch_Current_Frame >= tool["frame_number"]){
+                    var p0={x:tool.x1,y:tool.y1};
+                    var p1={x:tool.x2,y:tool.y2};
+                    drawLineWithArrowhead(p0,p1,15);
+                }
+                else if(tool["type"] == "image" && fetch_Current_Frame >= tool["frame_number"]){
+                    const img1 = new Image()
+                    img1.crossOrigin = "Anonymous";
+                    img1.src = tool["image"]
+                    // img.id = makeid(7)
+                    ctx.drawImage(img1, tool.x1, tool.y1, tool.x2-tool.x1, tool.y2-tool.y1);
+                }
+                else if(tool["type"] == "text" && fetch_Current_Frame >= tool["frame_number"]){
+                    ctx.font = tool["fontSize"]+"px "+tool["fontStyle"];
+                    ctx.fillStyle = tool["color"];
+                    let lineheight = tool["fontSize"];
+                    // add multiline text 
+                    for (var i = 0; i<tool["text"].length; i++){
+                        ctx.fillText(tool["text"][i], tool["x1"], tool["y1"]+ (i*lineheight*1.5))
+                    }
+                }
+                ctx.stroke();
+            }
+
+            // redraw all previous lines
+            frame_draw_tools = (current_Frame)=>{
+                fetch_Current_Frame = current_Frame
+                for(var i=0;i<lines.length;i++){
+                    drawTool(lines[i])
+                }
+            }
+            
+            // to get the canvas x and y positions
+            getScroll = () => {
+                var position = $('#canvas')
+                let x,y
+                if (window.pageYOffset != undefined) {
+                    x=parseInt(pageXOffset)
+                    y=parseInt(pageYOffset)
+                } else {
+                    var x_axis, y_axis, doc = document,
+                        ele = doc.documentElement,
+                        b = doc.body
+                    x_axis = ele.scrollLeft || b.scrollLeft || 0
+                    y_axis = ele.scrollTop || b.scrollTop || 0
+                    console.log(" X-axis : "+ x_axis + " Y-axis : " + y_axis)
+                    
+                    x=parseInt(x_axis-offsetX)
+                    y=parseInt(y_axis-offsetY)
+                }
+                
+                // console.log("previous",x,y)
+                // console.log("zoom",zoom_factor)
+                // for zoom factor
+                x = x+video_width*(1.0-Number(zoom_factor))
+                y = y+video_height*(1.0-Number(zoom_factor))
+                // console.log("after",x,y)
+                return {x,y}
+            }
+
+            // To select the current drawing tool
+            $('.btn').click(function() {
+                var d = $(this).data('datac');    
+
+                // to hide or show the textarea box on canvas
+                if(d == "text"){
+                    textareaElement()
+                }
+                else{
+                    $("[id^='addText']" ).remove()
+                }
+                $(this).css("background-color", "#232323");
+                $('.btn').not(this).css("background-color", "#454545");
+                current_Tool = d 
+                
+            });
+
+            function setZoom(zoom,el) {
+                  zoom_factor = zoom
+                  transformOrigin = [0,0];
+                  el = el || instance.getContainer();
+                //   console.log(el)
+                  var p = ["webkit", "moz", "ms", "o"],
+                        s = "scale(" + zoom + ")",
+                        oString = (transformOrigin[0] * 100) + "% " + (transformOrigin[1] * 100) + "%";
+
+                //   console.log(p)
+                  for (var i = 0; i < p.length; i++) {
+                      el.style[p[i] + "Transform"] = s;
+                      el.style[p[i] + "TransformOrigin"] = oString;
+                  }
+
+                  el.style["transform"] = s;
+                  el.style["transformOrigin"] = oString;
+                  
+            }
+            
+            $("#slider").on("change",function() {
+                var zoomScale = Number(this.value)/10;
+                // console.log(zoomScale)
+                setZoom(zoomScale,$(".video-container")[0])
+            });
+
+
+            // to change the line width of drawing tools 
+            $("#width").change(function(){
+                selectedWidth = $(this).children("option:selected").val();
+            });
+
+            // to change the font size of text
+            $("#fontSize").change(function(){
+                selectedFontWidth = $(this).children("option:selected").val();
+                $('textarea').css({'font-size':selectedFontWidth+'px','color':current_color})
+            });
+
+            function loadVideoData(e){
+                console.log("canvas initalization start")
+                video_width = video1.videoWidth
+                video_height = video1.videoHeight
+                canvas.width = video_width
+                canvas.height = video_height
+				
+				// var imgv  = document.getElementById("html5");
+				// ctx.drawImage(imgv, 0,0,video_width,video_height)
+                // console.log(video_width,video_height)
+                var imgv=new Image();
+                imgv.crossOrigin="anonymous";
+                imgv.src  = document.getElementById("html5").src
+                imgv.onload = function() {
+                    ctx.drawImage(imgv, 0,0,video_width,video_height)
+                }
+
+                canvasOffset=$("#canvas").offset();
+                offsetX=canvasOffset.left;
+                offsetY=canvasOffset.top;
+            }
+            
+            // it is called when video is loaded
+            video1.addEventListener( "loadedmetadata",loadVideoData)
+           
+            if(video1.readyState >= 2){
+                console.log("inside ready state")
+                loadVideoData()
+            }
+			
+			
+			
+            // Event listener when play the video
+            video1.addEventListener('play', function() {
+                console.log(canvas.width,canvas.height)
+                $("#canvas").mousedown(function(e){handleMouseDown(e)})
+                $("#canvas").mousemove(function(e){handleMouseMove(e)})
+                $("#canvas").mouseup(function(e){handleMouseUp(e)})
+                $("#canvas").mouseout(function(e){handleMouseUp(e)})
+
+                var $this = this; //cache
+                
+                (function loop() {
+                    if (!$this.paused && !$this.ended) {
+                        ctx.drawImage($this, 0,0)
+                        current_Frame_Img = $this
+                        // console.log("akash",Number(video.currentTime*30))
+                        frame_draw_tools(Number(video1.currentTime*30))
+                        setTimeout(loop, 1000 / 30) // drawing at 30fps
+                    }
+                })()
+            }, 0);
+
+
+        });
+    </script>
+    <script src="record_screen.js"></script>
+</body> 
+</html>
